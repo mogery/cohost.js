@@ -1,6 +1,6 @@
 {
   "name": "cohost",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Unofficial API for cohost.org",
   "main": "lib.js",
   "scripts": {},

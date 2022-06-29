@@ -94,6 +94,18 @@ class User {
             this.sessionCookie
         )).projects.map(x => new Project(this, x));
     }
+
+    /**
+     * Get Notifications of the User. Docs TBD
+     */
+    async getNotifications(offset = 0, limit = 20) {
+        return (await fetch(
+            "GET",
+            "/notifications/list",
+            this.sessionCookie,
+            { offset, limit }
+        ))
+    }
 }
 
 /**
@@ -103,6 +115,18 @@ class Project {
     constructor(user, data) {
         this.user = user;
         this.populate(data);
+    }
+
+    /**
+     * Creates a Project. Docs TBD
+     */
+    static async create(user, data) {
+        return await fetch(
+            "POST",
+            "/project",
+            user.sessionCookie,
+            data
+        );
     }
 
     /**
