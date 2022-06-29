@@ -1,0 +1,27 @@
+{
+  "name": "cohost",
+  "version": "0.0.1",
+  "description": "Unofficial API for cohost.org",
+  "main": "lib.js",
+  "scripts": {},
+  "keywords": [
+    "cohost"
+  ],
+  "author": "mogery",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "2"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mogery/cohost.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mogery/cohost.js/issues"
+  },
+  "homepage": "https://github.com/mogery/cohost.js#readme"
+}
