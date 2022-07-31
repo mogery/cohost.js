@@ -228,6 +228,7 @@ class Post {
    * @typedef {Object} PostAttachmentBlock
    * @property {string} fileURL
    * @property {string} attachmentId
+   * @property {string} altText
    */
 
   /**
@@ -239,7 +240,7 @@ class Post {
 
   /**
    * @typedef {Object} PostCreate
-   * @property {number} postState 1 for published, 0 for draft? or pending maybe?
+   * @property {number} postState 1 for published, 0 for draft
    * @property {string} headline Headline
    * @property {boolean} adultContent Does the post contain adult content?
    * @property {PostBlock[]} blocks Blocks (docs TBD)
