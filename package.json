@@ -3,7 +3,9 @@
   "version": "0.0.2",
   "description": "Unofficial API for cohost.org",
   "main": "lib.js",
-  "scripts": {},
+  "scripts": {
+    "prepare": "husky install"
+  },
   "keywords": [
     "cohost"
   ],
@@ -24,5 +26,10 @@
   "bugs": {
     "url": "https://github.com/mogery/cohost.js/issues"
   },
-  "homepage": "https://github.com/mogery/cohost.js#readme"
+  "homepage": "https://github.com/mogery/cohost.js#readme",
+  "devDependencies": {
+    "husky": "^7.0.0",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1"
+  }
 }
