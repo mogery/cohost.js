@@ -1,6 +1,11 @@
-const _fetch = require("node-fetch");
+const _fetch = require('node-fetch')
 const crypto = require("crypto");
+const needle = require('needle');
 const { decode } = require("./lib/b64arraybuffer");
+const fs = require('fs');
+const path = require('path');
+const mime = require('mime-types');
+
 
 const API_BASE = "https://cohost.org/api/v1";
 
@@ -15,14 +20,14 @@ const API_BASE = "https://cohost.org/api/v1";
  * @param {boolean} [complex=false] Whether to return {headers, body}, or just the body
  * @returns Response, JSON parsed if parsable, string if not
  */
-async function fetch(method, endpoint, cookies = "", data, complex = false) {
+async function fetch(method, endpoint, cookies = "", data, complex = false, headers = {}) {
     let url = API_BASE + endpoint + (method == "GET" && data ? "?" + new URLSearchParams(data).toString() : "");
 
     let req = await _fetch(url, {
         method,
         headers: {
             "Content-Type": "application/json",
-            "Cookie": cookies
+            "Cookie": cookies,
         },
         body: (method != "GET" && data) ? JSON.stringify(data) : undefined
     });
@@ -112,54 +117,86 @@ class User {
  * Represents a cohost Project (e.g. @mog)
  */
 class Project {
-    constructor(user, data) {
-        this.user = user;
-        this.populate(data);
-    }
+  constructor(user, data) {
+    this.user = user;
+    this.populate(data);
+  }
 
-    /**
-     * Creates a Project. Docs TBD
-     */
-    static async create(user, data) {
-        return await fetch(
-            "POST",
-            "/project",
-            user.sessionCookie,
-            data
-        );
-    }
+  /**
+   * Creates a Project. Docs TBD
+   */
+  static async create(user, data) {
+    return await fetch("POST", "/project", user.sessionCookie, data);
+  }
 
-    /**
-     * @private
-     */
-    populate(data) {
-        this.id = data.projectId;
-        this.handle = data.handle;
-        this.displayName = data.displayName;
-        this.dek = data.dek;
-        this.description = data.description;
-        this.avatarURL = data.avatarURL;
-        this.headerURL = data.headerURL;
-        this.privacy = data.privacy;
-        this.pronouns = data.pronouns;
-        this.url = data.url;
-        this.flags = data.flags;
-        this.avatarShape = data.avatarShape;
-    }
+  /**
+   * @private
+   */
+  populate(data) {
+    this.id = data.projectId;
+    this.handle = data.handle;
+    this.displayName = data.displayName;
+    this.dek = data.dek;
+    this.description = data.description;
+    this.avatarURL = data.avatarURL;
+    this.headerURL = data.headerURL;
+    this.privacy = data.privacy;
+    this.pronouns = data.pronouns;
+    this.url = data.url;
+    this.flags = data.flags;
+    this.avatarShape = data.avatarShape;
+  }
 
-    /**
-     * @param {number} [page=0] Page of posts to get, 20 posts per page
-     * @returns {object[]}
-     */
-    async getPosts(page = 0) {
-        let res = await fetch(
-            "GET",
-            `/project/${encodeURIComponent(this.handle)}/posts?page=${encodeURIComponent(page.toString())}`,
-            this.user.sessionCookie
-        );
+  /**
+   * @param {number} [page=0] Page of posts to get, 20 posts per page
+   * @returns {object[]}
+   */
+  async getPosts(page = 0) {
+    let res = await fetch(
+      "GET",
+      `/project/${encodeURIComponent(
+        this.handle
+      )}/posts?page=${encodeURIComponent(page.toString())}`,
+      this.user.sessionCookie
+    );
 
-        return res.items.map(x => new Post(this.user, x));
-    }
+    return res.items.map((x) => new Post(this.user, x));
+  }
+
+  async uploadAttachment(postId, filename) {
+    const fileContentType = mime.lookup(filename);
+    const fileContentLength = fs.statSync(filename).size;
+    const S3Parameters = await fetch(
+      "POST",
+      `/project/${encodeURIComponent(
+        this.handle
+      )}/posts/${postId}/attach/start`,
+      this.user.sessionCookie,
+      {
+        filename: path.basename(filename),
+        content_type: fileContentType,
+        content_length: fileContentLength,
+      }
+    );
+
+    await needle('post', S3Parameters.url, {
+      ...S3Parameters.requiredFields,
+      file: {
+        file: filename,
+        content_type: fileContentType
+      }
+    }, {multipart: true});
+
+    const res =  fetch(
+      "POST",
+      `/project/${encodeURIComponent(
+        this.handle
+      )}/posts/${postId}/attach/finish/${S3Parameters.attachmentId}`,
+      this.user.sessionCookie
+    )
+
+    console.log(await res)
+  }
 }
 
 /**

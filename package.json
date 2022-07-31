@@ -10,12 +10,13 @@
   "author": "mogery",
   "license": "MIT",
   "dependencies": {
+    "mime-types": "^2.1.35",
+    "needle": "^3.1.0",
     "node-fetch": "2"
   },
   "directories": {
     "lib": "lib"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mogery/cohost.js.git"
