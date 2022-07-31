@@ -262,7 +262,18 @@ class Post {
       data
     );
 
-    // return await Post.getById(project, postId);
+    return postId;
+  }
+
+  /** see {@link create} */
+  static async update(project, postId, data) {
+    await fetch(
+      "PUT",
+      `/project/${encodeURIComponent(project.handle)}/posts/${postId}`,
+      project.user.sessionCookie,
+      data
+    );
+
     return postId;
   }
 
