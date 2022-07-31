@@ -206,7 +206,7 @@ class Project {
       this.user.sessionCookie
     );
 
-    console.log(await res);
+    return await res;
   }
 }
 
