@@ -22,13 +22,23 @@ const cohost = require("cohost");
   let [project] = await user.getProjects();
 
   // Create Post
-  await cohost.Post.create(project, {
+  let myPostID = await cohost.Post.create(project, {
     postState: 1,
     headline: "hello world from cohost.js",
     adultContent: false,
     blocks: [],
     cws: [],
     tags: []
+  });
+
+  // Edit Post
+  await cohost.Post.update(project, myPostID, {
+    postState: 1,
+    headline: "Hello world from cohost.js!",
+    adultContent: false,
+    blocks: [],
+    cws: [],
+    tags: ["cohost.js"]
   });
 
   // Get Posts of Project
@@ -64,10 +74,10 @@ Works:
 - Logging in
 - Getting the posts of a project
 - Creating a post
+- Editing a post
 
 Doesn't work:
 
-- Editing a post: possible, haven't done it
 - Sharing a post: possible, haven't done it
 - Liking a post: possible, haven't done it
 - Getting notifications: possible, haven't done it

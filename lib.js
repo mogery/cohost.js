@@ -265,7 +265,12 @@ class Post {
     return postId;
   }
 
-  /** see {@link create} */
+  /**
+   *
+   * @param {Project} project Project to post to
+   * @param {string} postId ID of the post to update
+   * @param {PostCreate} data
+   */
   static async update(project, postId, data) {
     await fetch(
       "PUT",
