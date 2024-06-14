@@ -35,10 +35,10 @@ async function fetch(
   let req = await _fetch(url, {
     method,
     headers: {
-      "Content-Type": "application/json",
+      ...(data && data instanceof FormData ? {} : {"Content-Type": "application/json"}),
       Cookie: cookies
     },
-    body: method != "GET" && data ? JSON.stringify(data) : undefined
+    body: method != "GET" && data ? (data instanceof FormData ? data : JSON.stringify(data)) : undefined
   });
 
   let res = await req.text();
